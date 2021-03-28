@@ -11,7 +11,7 @@ using namespace scad;
 
 constexpr bool kWriteTestKeys = false;
 // Add the caps into the stl for testing.
-constexpr bool kAddCaps = true;//false;
+constexpr bool kAddCaps = false;
 
 enum class Direction { UP, DOWN, LEFT, RIGHT };
 
@@ -34,7 +34,7 @@ int main() {
 
   if (kWriteTestKeys) {
     std::vector<Shape> test_shapes;
-    std::vector<Key*> test_keys = {&d.key_3, &d.key_e, &d.key_4, &d.key_5, &d.key_d};
+    std::vector<Key*> test_keys = {&d.key_e, &d.key_d, &d.key_r, &d.key_t, &d.key_d};
     for (Key* key : test_keys) {
       key->add_side_nub = false;
       key->extra_z = 4;
@@ -66,8 +66,7 @@ int main() {
     }
   }
 
-  d.key_5.extra_width_right = 2;
-  d.key_t.extra_width_right = 3;
+  d.key_t.extra_width_right = 2;
   d.key_g.extra_width_right = 3;
   d.key_b.extra_width_right = 3;
 
@@ -117,6 +116,7 @@ int main() {
                               d.key_right_arrow.GetBottomLeft(),
                               d.key_left_arrow.GetBottomRight().TranslateFront(0, 0, -1),
                               slash_bottom_right,
+			      d.key_slash.GetBottomRight(),
                               d.key_backspace.GetBottomLeft(),
                           }));
   shapes.push_back(TriFan(d.key_backspace.GetTopRight(),
@@ -181,24 +181,21 @@ int main() {
 
     std::vector<WallPoint> wall_points = {
         // Start top left and go clockwise
-        {d.key_plus.GetTopLeft(), up},
-        {d.key_plus.GetTopRight(), up, 0, .3},
+        {d.key_tab.GetTopLeft(), up},
+        {d.key_tab.GetTopRight(), up, 0, .3},
 
-        {d.key_1.GetTopLeft(), up, 0, .5},
-        {d.key_1.GetTopRight().RotateFront(0, 0, 30), up, 0, 1},
+        {d.key_q.GetTopLeft(), up, 0, .5},
+        {d.key_q.GetTopRight().RotateFront(0, 0, 30), up, 0, 1},
 
-        {d.key_2.GetTopLeft(), up, 0, .3},
-        {d.key_2.GetTopRight(), up},
+        {d.key_w.GetTopLeft(), up, 0, .3},
+        {d.key_w.GetTopRight(), up},
 
-        {d.key_3.GetTopLeft(), up},
-        {d.key_3.GetTopRight(), up},
+        {d.key_e.GetTopLeft(), up},
+        {d.key_e.GetTopRight(), up},
 
-        {d.key_4.GetTopLeft(), up},
-        {d.key_4.GetTopRight(), up},
-        {d.key_5.GetTopRight(), up},
-        {d.key_5.GetTopRight(), right},
-        {d.key_5.GetBottomRight(), right},
-
+        {d.key_r.GetTopLeft(), up},
+        {d.key_r.GetTopRight(), up},
+        {d.key_t.GetTopRight(), up},
         {d.key_t.GetTopRight(), right},
         {d.key_t.GetBottomRight(), right},
 
@@ -244,8 +241,8 @@ int main() {
         {d.key_tab.GetBottomLeft(), left},
         {d.key_tab.GetTopLeft(), left},
 
-        {d.key_plus.GetBottomLeft(), left},
-        {d.key_plus.GetTopLeft(), left},
+        {d.key_tab.GetBottomLeft(), left},
+        {d.key_tab.GetTopLeft(), left},
     };
 
     std::vector<std::vector<Shape>> wall_slices;
@@ -322,12 +319,12 @@ int main() {
     screw_left_bottom.z = 0;
     screw_left_bottom.x += 3.2;
 
-    glm::vec3 screw_left_top = d.key_plus.GetTopLeft().Apply(kOrigin);
+    glm::vec3 screw_left_top = d.key_tab.GetTopLeft().Apply(kOrigin);
     screw_left_top.z = 0;
     screw_left_top.x += 2.8;
     screw_left_top.y += -.5;
 
-    glm::vec3 screw_right_top = d.key_5.GetTopRight().Apply(kOrigin);
+    glm::vec3 screw_right_top = d.key_t.GetTopRight().Apply(kOrigin);
     screw_right_top.z = 0;
     screw_right_top.x -= .8;
     screw_right_top.y += -.5;
@@ -363,10 +360,10 @@ int main() {
 
   // Cut out holes for cords. Inserts can be printed to fit in.
   Shape connector_hole = Cube(10, 20, 10).TranslateZ(12 / 2);
-  glm::vec3 connector_location1 = d.key_4.GetTopLeft().Apply(kOrigin);
+  glm::vec3 connector_location1 = d.key_r.GetTopLeft().Apply(kOrigin);
   connector_location1.z = 6;
   connector_location1.x += 9.75;
-  glm::vec3 connector_location2 = d.key_5.GetTopLeft().Apply(kOrigin);
+  glm::vec3 connector_location2 = d.key_t.GetTopLeft().Apply(kOrigin);
   connector_location2.z = 6;
   connector_location2.x += 10.5;
   negative_shapes.push_back(connector_hole.Translate(connector_location1));

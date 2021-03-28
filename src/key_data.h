@@ -9,13 +9,6 @@ namespace scad {
 struct KeyData {
   KeyData(TransformList origin);
 
-  Key key_plus;
-  Key key_1;
-  Key key_2;
-  Key key_3;
-  Key key_4;
-  Key key_5;
-
   Key key_tab;
   Key key_q;
   Key key_w;
@@ -49,7 +42,6 @@ struct KeyData {
 
   // clang-format off
   KeyGrid grid {{
-    { &key_plus,   &key_1,      &key_2,      &key_3,           &key_4,            &key_5},
     { &key_tab,    &key_q,      &key_w,      &key_e,           &key_r,            &key_t},
     { &key_caps,   &key_a,      &key_s,      &key_d,           &key_f,            &key_g},
     { &key_shift,  &key_z,      &key_x,      &key_c,           &key_v,            &key_b},
