@@ -48,6 +48,7 @@ Shape RotateCapEdge(Shape s, SaEdgeType edge_type) {
     case SaEdgeType::TOP:
       return s.RotateZ(180);
     case SaEdgeType::BOTTOM:
+    default:
       return s;
   }
 }

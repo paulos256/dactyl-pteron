@@ -11,7 +11,7 @@ using namespace scad;
 
 constexpr bool kWriteTestKeys = false;
 // Add the caps into the stl for testing.
-constexpr bool kAddCaps = false;
+constexpr bool kAddCaps = true;//false;
 
 enum class Direction { UP, DOWN, LEFT, RIGHT };
 
@@ -51,18 +51,13 @@ int main() {
 
   d.key_backspace.extra_width_bottom = 2;
   d.key_backspace.extra_width_left = 2;
+  d.key_delete.extra_width_top = 2;
   d.key_delete.extra_width_bottom = 2;
-  d.key_end.extra_width_bottom = 2;
   d.key_ctrl.extra_width_top = 2;
+  d.key_ctrl.extra_width_bottom = 2;
   d.key_alt.extra_width_top = 2;
   d.key_alt.extra_width_right = 2;
-  d.key_alt.extra_width_left = 2;
-  d.key_home.extra_width_right = 2;
-  d.key_home.extra_width_left = 2;
-  d.key_home.extra_width_top = 2;
-  d.key_end.extra_width_top = 2;
-  d.key_end.extra_width_right = 2;
-  d.key_end.extra_width_left = 2;
+  d.key_alt.extra_width_bottom = 2;
 
   // left wall
   for (Key* key : d.grid.column(0)) {
@@ -74,6 +69,7 @@ int main() {
   d.key_5.extra_width_right = 2;
   d.key_t.extra_width_right = 3;
   d.key_g.extra_width_right = 3;
+  d.key_b.extra_width_right = 3;
 
   for (Key* key : d.grid.row(0)) {
     // top row
@@ -89,16 +85,20 @@ int main() {
   // Thumb plate
   //
 
-  shapes.push_back(Union(ConnectHorizontal(d.key_ctrl, d.key_alt),
-                         ConnectHorizontal(d.key_backspace, d.key_delete),
-                         ConnectVertical(d.key_ctrl, d.key_delete),
-                         Tri(d.key_end.GetBottomLeft(),
-                             d.key_delete.GetBottomRight(),
-                             d.key_backspace.GetBottomLeft())));
+  shapes.push_back(Union(ConnectHorizontal(d.key_backspace, d.key_delete)
+                        ,ConnectHorizontal(d.key_delete, d.key_ctrl)
+                        ,ConnectHorizontal(d.key_ctrl, d.key_alt)
+                        ,Tri(d.key_backspace.GetTopLeft(),
+                             d.key_backspace.GetTopRight(),
+                             d.key_delete.GetTopLeft())
+                        ,Tri(d.key_delete.GetTopLeft(),
+                             d.key_delete.GetTopRight(),
+                             d.key_ctrl.GetTopLeft())
+                         ));
 
   shapes.push_back(ConnectMainKeys(d));
 
-  shapes.push_back(TriFan(d.key_ctrl.GetTopLeft(),
+  shapes.push_back(TriFan(d.key_delete.GetTopLeft(),
                           {
                               d.key_b.GetBottomRight(),
                               d.key_b.GetTopRight(),
@@ -111,34 +111,38 @@ int main() {
   // reduce the vertical jumps.
   TransformList slash_bottom_right = d.key_slash.GetBottomRight().TranslateFront(0, 0, -1);
 
-  shapes.push_back(TriFan(d.key_backspace.GetBottomLeft(),
+  shapes.push_back(TriFan(d.key_backspace.GetTopLeft(),
                           {
-                              d.key_backspace.GetBottomLeft(),
                               d.key_right_arrow.GetBottomRight(),
-                              d.key_right_arrow.GetBottomLeft().TranslateFront(0, 0, -1),
+                              d.key_right_arrow.GetBottomLeft(),
                               d.key_left_arrow.GetBottomRight().TranslateFront(0, 0, -1),
-                              d.key_left_arrow.GetBottomLeft(),
                               slash_bottom_right,
+                              d.key_backspace.GetBottomLeft(),
+                          }));
+  shapes.push_back(TriFan(d.key_backspace.GetTopRight(),
+                          {
+                              d.key_backspace.GetTopLeft(),
+                              d.key_right_arrow.GetBottomRight(),
+                              d.key_b.GetBottomRight(),
+                              d.key_delete.GetTopLeft(),
+                          }));
+  shapes.push_back(TriFan(d.key_delete.GetTopRight(),
+                          {
+                              d.key_delete.GetTopLeft(),
+                              d.key_b.GetBottomRight(),
+                              d.key_ctrl.GetTopLeft(),
+                          }));
+  shapes.push_back(TriFan(d.key_b.GetBottomLeft(),
+                          {
+                              d.key_b.GetBottomRight(),
+                              d.key_right_arrow.GetBottomRight(),
+                              d.key_right_arrow.GetTopRight(),
+                              d.key_v.GetBottomRight(),
                           }));
   shapes.push_back(TriFan(d.key_tilde.GetBottomRight(),
                           {
                               d.key_slash.GetBottomLeft(),
                               slash_bottom_right,
-                          }));
-  shapes.push_back(TriFan(d.key_delete.GetTopLeft(),
-                          {
-                              d.key_ctrl.GetTopLeft(),
-                              d.key_b.GetBottomRight(),
-                              d.key_backspace.GetTopLeft(),
-                          }));
-  shapes.push_back(TriFan(d.key_b.GetBottomLeft(),
-                          {
-                              d.key_b.GetBottomRight(),
-                              d.key_backspace.GetTopLeft(),
-                              d.key_backspace.GetTopLeft(),
-                              d.key_right_arrow.GetBottomRight(),
-                              d.key_right_arrow.GetTopRight(),
-                              d.key_v.GetBottomRight(),
                           }));
 
   // Bottom right corner.
@@ -201,25 +205,31 @@ int main() {
         {d.key_g.GetTopRight(), right},
         {d.key_g.GetBottomRight(), right, 1, .5},
 
-        {d.key_ctrl.GetTopLeft().RotateFront(0, 0, -15), up, 1, .5},
-        {d.key_ctrl.GetTopRight(), up},
+        {d.key_b.GetTopRight(), right, 1, .5},
+        {d.key_b.GetBottomRight(), right, 1, .5},
 
-        {d.key_alt.GetTopLeft(), up},
-        {d.key_alt.GetTopRight(), up, 0, .5},
-        {d.key_alt.GetTopRight(), right, 0, .5},
-        {d.key_alt.GetBottomRight(), right},
+        // thumb plate
+        {d.key_ctrl.GetTopLeft().RotateFront(0, 0, -25), up, 1, .5},
+        {d.key_ctrl.GetTopRight(), up, 1, .5},
+        {d.key_alt.GetTopLeft(), up, 1, .5},
 
-        {d.key_home.GetTopRight(), right},
-        {d.key_home.GetBottomRight(), right},
+        // round the corner
+        {d.key_alt.GetTopRight(), up, 1, .5},
+        {d.key_alt.GetTopRight(), right, 1, .5},
+        {d.key_alt.GetBottomRight(), right, 1, .5},
+        {d.key_alt.GetBottomRight(), down, 1, .5},
+	// bottom edge
+        {d.key_alt.GetBottomLeft(), down, 1, .5},
+        {d.key_ctrl.GetBottomRight(), down, 1, .5},
+        {d.key_ctrl.GetBottomLeft(), down, 1, .5},
+        {d.key_delete.GetBottomRight(), down, 1, .5},
+        {d.key_delete.GetBottomLeft(), down, 1, .5},
+        {d.key_backspace.GetBottomRight(), down, 1, .5},
+        {d.key_backspace.GetBottomLeft().RotateFront(0, 0, 15), down, 1, .5},
+        {d.key_backspace.GetBottomLeft(), left, 1, .5},
+        // /thumb plate
 
-        {d.key_end.GetTopRight(), right},
-        {d.key_end.GetBottomRight(), right, 0, .5},
-        {d.key_end.GetBottomRight(), down, 0, .5},
-        {d.key_end.GetBottomLeft(), down},
-
-        {d.key_backspace.GetBottomLeft(), down},
-
-        {slash_bottom_right, down},
+        {slash_bottom_right.RotateFront(0, 0, -25), down},
 
         {d.key_tilde.GetBottomRight(), down},
         {d.key_tilde.GetBottomLeft(), down},
@@ -322,10 +332,10 @@ int main() {
     screw_right_top.x -= .8;
     screw_right_top.y += -.5;
 
-    glm::vec3 screw_right_bottom = d.key_end.GetBottomLeft().Apply(kOrigin);
+    glm::vec3 screw_right_bottom = d.key_backspace.GetBottomLeft().Apply(kOrigin);
     screw_right_bottom.z = 0;
-    screw_right_bottom.y += 3.5;
-    screw_right_bottom.x += 1.5;
+    screw_right_bottom.y += 2.3;
+    screw_right_bottom.x += 1.4;
 
     glm::vec3 screw_right_mid = d.key_ctrl.GetTopLeft().Apply(kOrigin);
     screw_right_mid.z = 0;
@@ -347,9 +357,9 @@ int main() {
 
   std::vector<Shape> negative_shapes;
   AddShapes(&negative_shapes, screw_holes);
-  // Cut off the parts sticking up into the thumb plate.
-  negative_shapes.push_back(
-      d.key_backspace.GetTopLeft().Apply(Cube(50, 50, 6).TranslateZ(3)).Color("red"));
+//  Cut off the parts sticking up into the thumb plate.
+//  negative_shapes.push_back(
+//    d.key_backspace.GetTopLeft().Apply(Cube(50, 50, 6).TranslateZ(3)).Color("red"));
 
   // Cut out holes for cords. Inserts can be printed to fit in.
   Shape connector_hole = Cube(10, 20, 10).TranslateZ(12 / 2);

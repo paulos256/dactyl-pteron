@@ -44,8 +44,6 @@ struct KeyData {
 
   Key key_backspace;
   Key key_delete;
-  Key key_end;
-  Key key_home;
   Key key_ctrl;
   Key key_alt;
 
@@ -60,7 +58,7 @@ struct KeyData {
   // clang-format on
 
   std::vector<Key*> thumb_keys() {
-    return {&key_delete, &key_backspace, &key_ctrl, &key_alt, &key_home, &key_end};
+    return { &key_delete, &key_backspace, &key_ctrl, &key_alt };
   }
 
   std::vector<Key*> all_keys() {

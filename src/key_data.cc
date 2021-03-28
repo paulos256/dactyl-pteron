@@ -71,17 +71,47 @@ KeyData::KeyData(TransformList key_origin) {
   key_backspace.Configure([&](Key& k) {
     k.name = "key_backspace";
     k.SetParent(key_origin);
-    k.SetPosition(60, -9.18, 42.83);
-    k.t().rz = -21;
-    k.t().rx = 12;
-    k.t().ry = -4.5;
+//    k.SetPosition(60, -9.18, 42.83);
+//    k.t().rz = -21;
+//    k.t().rx = 12;
+//    k.t().ry = -4.5;
+    k.SetPosition(43, -19.48, 37.48);
+    k.t().rz = -11;
+    k.t().rx = 18;
+    k.t().ry = 0;
   });
 
+  struct NextKey
+  {
+    Key& key;
+    const char* const name;
+
+  } static const next_thumb_keys[] =
+  {
+    { key_delete, "key_delete" },
+    { key_ctrl, "key_ctrl" },
+    { key_alt, "key_alt" },
+  };
+
+  const Key* thumb_parent = &key_backspace;
+  for (const NextKey& next_key : next_thumb_keys)
+  {
+    next_key.key.Configure([&](Key& k) {
+      k.name = next_key.name;
+      k.SetParent(*thumb_parent);
+      k.SetPosition(kDefaultKeySpacing + 3.55, -1.35, 0);
+      k.t().rz = -7;
+    });
+    thumb_parent = &next_key.key;
+  }
+
+/*
   // Second thumb key.
   key_delete.Configure([&](Key& k) {
     k.name = "key_delete";
     k.SetParent(key_backspace);
     k.SetPosition(kDefaultKeySpacing, 0, 0);
+    k.t().rz = -7;
   });
 
   // Bottom side key.
@@ -111,6 +141,7 @@ KeyData::KeyData(TransformList key_origin) {
     k.SetParent(key_delete);
     k.SetPosition(0, 10 + kDefaultKeySpacing, 0);
   });
+*/
 
   //
   // Main bowl keys
