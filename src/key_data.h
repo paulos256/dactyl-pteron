@@ -35,10 +35,10 @@ struct KeyData {
   Key key_left_arrow;
   Key key_right_arrow;
 
-  Key key_backspace;
-  Key key_delete;
-  Key key_ctrl;
-  Key key_alt;
+  Key key_thumb1;
+  Key key_thumb2;
+  Key key_thumb3;
+  Key key_thumb4;
 
   // clang-format off
   KeyGrid grid {{
@@ -50,7 +50,7 @@ struct KeyData {
   // clang-format on
 
   std::vector<Key*> thumb_keys() {
-    return { &key_delete, &key_backspace, &key_ctrl, &key_alt };
+    return { &key_thumb1, &key_thumb2, &key_thumb3, &key_thumb4,  };
   }
 
   std::vector<Key*> all_keys() {
